@@ -3,7 +3,7 @@ import Link from 'next/link';
 
 export default function Box(props) {
   return (
-    <Link href={`/anime/${props.data.id}`}>
+    <Link href={`/${props.data.type.toLowerCase()}/${props.data.id}`}>
       <a>
         <div className='w-full lg:h-[20rem] md:h-64 sm:h-64 h-64 group relative shadow-2xl rounded-md'>
           <div className='w-3/5 h-1/5 absolute hidden group-hover:block blur-2xl bottom-[-10px] left-1/2 -translate-x-1/2 transition-all duration-1000'>

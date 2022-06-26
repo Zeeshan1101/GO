@@ -4,6 +4,7 @@ import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { removeCookies } from 'cookies-next';
 const UserDiv = ({ user }) => {
+  console.log(user);
   const router = useRouter();
   const Click = () => {
     removeCookies('token');
@@ -14,7 +15,9 @@ const UserDiv = ({ user }) => {
       {!Boolean(user) && (
         <Link href='https://anilist.co/api/v2/oauth/authorize?client_id=8618&redirect_uri=http://localhost:3000/api/login&response_type=code'>
           <a className='w-[3.5rem] h-[3.5rem] bg-slate-600 py-2 px-2 hover:shadow-[rgba(0,0,0,0.35)_0px_5px_15px] flex items-center justify-center font-bold  rounded-full'>
-            <span className='material-symbols-outlined '>login</span>
+            <span className='material-symbols-outlined text-slate-300'>
+              login
+            </span>
           </a>
         </Link>
       )}
@@ -22,7 +25,7 @@ const UserDiv = ({ user }) => {
         <>
           <div className=' w-[3.5rem] h-[3.5rem] relative group'>
             <div className='avatar w-full h-full relative'>
-              {user.user.avatar.large ? (
+              {user.avatar.large ? (
                 <Image
                   layout='fill'
                   className='rounded-full'
@@ -31,7 +34,7 @@ const UserDiv = ({ user }) => {
                 />
               ) : (
                 <div className='bg-neutral-focus text-neutral-content rounded-full w-24'>
-                  <span>{user.user.name.slice(0, 1)}</span>
+                  <span>{user.name.slice(0, 1)}</span>
                 </div>
               )}
             </div>

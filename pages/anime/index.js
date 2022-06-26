@@ -4,17 +4,15 @@ import { Formik, Field } from 'formik';
 import { gql } from '@apollo/client';
 import client from '../apollo-client';
 import Box from '../../components/Box';
+import { getCookie } from 'cookies-next';
 
 const MyInput = ({ field, form, ...props }) => {
   return <input {...field} {...props} />;
 };
 
 export default function Page(props) {
-  console.log(props);
   const router = useRouter();
-  const handleSubmit = (e) => {
-    e.preventDefault();
-  };
+
   return (
     <motion.div
       className='h-full w-full overflow-x-hidden pt-2'
@@ -23,18 +21,25 @@ export default function Page(props) {
       exit={{ opacity: 0 }}>
       <div className='container w-10/12 mx-auto mt-4'>
         <Formik
-          initialValues={{ search: '' }}
-          onSubmit={(value) => {
+          initialValues={{ search: '', genre: 'Action' }}
+          onSubmit={(values) => {
+            const valueToSend = values;
+            for (let i in valueToSend) {
+              if (valueToSend[i] === '') {
+                delete valueToSend.search;
+              }
+            }
+            console.log(valueToSend);
             router.push({
               pathname: '/anime',
-              query: { ...value },
+              query: { ...valueToSend },
             });
           }}>
           {({ values, handleSubmit }) => (
             <form
               method='post'
               onSubmit={handleSubmit}
-              className='grid grid-cols-4'>
+              className='flex justify-center items-end gap-3'>
               <div className='grid'>
                 <label htmlFor='search'>Search</label>
                 <Field
@@ -44,14 +49,38 @@ export default function Page(props) {
                   className='input'
                   placeholder='Search for anime'
                   value={values.search}
-                  components={MyInput}
+                  component={MyInput}
                 />
+              </div>
+              <div className='grid'>
+                <label htmlFor='genre'>Genre</label>
+                <Field
+                  id='genre'
+                  name='genre'
+                  type='select'
+                  className='select'
+                  placeholder='Search for anime'
+                  as='select'
+                  value={values.genre}>
+                  {props.genre.map((genre, id) => {
+                    return (
+                      <option key={id} className='capitalize' value={genre}>
+                        {genre}
+                      </option>
+                    );
+                  })}
+                </Field>
+              </div>
+              <div className='h-full'>
+                <button type='submit' className='btn h-full'>
+                  Search
+                </button>
               </div>
             </form>
           )}
         </Formik>
 
-        <div className='mt-5 mb-10 grid grid-cols-6 gap-5 gap-y-10'>
+        <div className='mt-5 mb-10 grid xl:grid-cols-6 lg:grid-cols-5 md:grid-cols-4 sm:grid-cols-3 grid-cols-2 gap-5 gap-y-10'>
           {props.anime.media.map((anime, id) => (
             <Box key={id} data={anime} />
           ))}
@@ -67,13 +96,22 @@ export async function getServerSideProps({ query }) {
       query (
         $search: String
         $sort: [MediaSort]
+        $genre: String
         $isAdult: Boolean
         $type: MediaType
         $page: Int
         $perPage: Int
       ) {
+        genre: GenreCollection
         anime: Page(page: $page, perPage: $perPage) {
-          media(search: $search, sort: $sort, isAdult: $isAdult, type: $type) {
+          media(
+            search: $search
+            genre: $genre
+            sort: $sort
+            isAdult: $isAdult
+            type: $type
+          ) {
+            type
             title {
               english
               userPreferred

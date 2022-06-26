@@ -1,11 +1,10 @@
 import { motion } from 'framer-motion';
 import { gql } from '@apollo/client';
 import client from './apollo-client';
-import UserContext from '../lib/context';
-import { useContext } from 'react';
+import { useAuth } from './apollo-client';
 import BoxList from '../components/BoxList';
 export default function Home(props) {
-  const { user } = useContext(UserContext);
+  const { user } = useAuth();
   return (
     <motion.div
       className='h-full w-full overflow-x-hidden pt-2'
@@ -13,7 +12,7 @@ export default function Home(props) {
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}>
       <div className='container w-full  mx-auto text-4xl font-semibold text-gray-600 flex items-center justify-center capitalize'>
-        Welcome , {user ? `${user.user.name}` : '____________'}
+        Welcome , {user ? `${user.name}` : '____________'}
       </div>
       <>
         <div className='container w-10/12 pt-3 mx-auto'>
@@ -62,16 +61,13 @@ export async function getStaticProps() {
         trendingAnime: Page(page: 1, perPage: 6) {
           media(sort: [TRENDING_DESC], type: ANIME) {
             id
+            type
             coverImage {
               extraLarge
-              large
-              medium
               color
             }
             title {
-              romaji
               english
-              native
               userPreferred
             }
           }
@@ -85,16 +81,13 @@ export async function getStaticProps() {
             status: NOT_YET_RELEASED
           ) {
             id
+            type
             coverImage {
               extraLarge
-              large
-              medium
               color
             }
             title {
-              romaji
               english
-              native
               userPreferred
             }
           }
@@ -102,16 +95,14 @@ export async function getStaticProps() {
         trendingManga: Page(page: 1, perPage: 6) {
           media(sort: [TRENDING_DESC], type: MANGA) {
             id
+            type
             coverImage {
               extraLarge
-              large
-              medium
+
               color
             }
             title {
-              romaji
               english
-              native
               userPreferred
             }
           }
@@ -119,16 +110,14 @@ export async function getStaticProps() {
         popularManga: Page(page: 1, perPage: 6) {
           media(sort: [POPULARITY_DESC], type: MANGA) {
             id
+            type
             coverImage {
               extraLarge
-              large
-              medium
+
               color
             }
             title {
-              romaji
               english
-              native
               userPreferred
             }
           }
