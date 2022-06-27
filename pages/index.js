@@ -3,8 +3,14 @@ import { gql } from '@apollo/client';
 import client from './apollo-client';
 import { useAuth } from './apollo-client';
 import BoxList from '../components/BoxList';
+import { useQuery } from '@apollo/client/react';
+import Loader from '../components/Loader';
 export default function Home(props) {
   const { user } = useAuth();
+  const { data, loading } = useQuery(HomePageQuery);
+  if (loading) {
+    return <Loader />;
+  }
   return (
     <motion.div
       className='h-full w-full overflow-x-hidden pt-2'
@@ -19,14 +25,14 @@ export default function Home(props) {
           <div className='trending-content w-full'>
             <BoxList
               title='Trending Anime'
-              data={props.trendingAnime.media}
+              data={data.trendingAnime.media}
               type='anime'
             />
           </div>
           <div className='popular-content w-full'>
             <BoxList
               title='Popular Anime'
-              data={props.popularAnime.media}
+              data={data.popularAnime.media}
               type='anime'
             />
           </div>
@@ -37,14 +43,14 @@ export default function Home(props) {
           <div className='trending-content w-full'>
             <BoxList
               title='Trending MANGA'
-              data={props.trendingManga.media}
+              data={data.trendingManga.media}
               type='manga'
             />
           </div>
           <div className='popular-content w-full'>
             <BoxList
               title='Popular MANGA'
-              data={props.popularManga.media}
+              data={data.popularManga.media}
               type='manga'
             />
           </div>
@@ -54,79 +60,71 @@ export default function Home(props) {
   );
 }
 
-export async function getStaticProps() {
-  const { data } = await client.query({
-    query: gql`
-      query {
-        trendingAnime: Page(page: 1, perPage: 6) {
-          media(sort: [TRENDING_DESC], type: ANIME) {
-            id
-            type
-            coverImage {
-              extraLarge
-              color
-            }
-            title {
-              english
-              userPreferred
-            }
-          }
+const HomePageQuery = gql`
+  query {
+    trendingAnime: Page(page: 1, perPage: 6) {
+      media(sort: [TRENDING_DESC], type: ANIME) {
+        id
+        type
+        coverImage {
+          extraLarge
+          color
         }
-        popularAnime: Page(page: 1, perPage: 6) {
-          media(
-            sort: [POPULARITY_DESC]
-            type: ANIME
-            seasonYear: 2022
-            season: SUMMER
-            status: NOT_YET_RELEASED
-          ) {
-            id
-            type
-            coverImage {
-              extraLarge
-              color
-            }
-            title {
-              english
-              userPreferred
-            }
-          }
-        }
-        trendingManga: Page(page: 1, perPage: 6) {
-          media(sort: [TRENDING_DESC], type: MANGA) {
-            id
-            type
-            coverImage {
-              extraLarge
-
-              color
-            }
-            title {
-              english
-              userPreferred
-            }
-          }
-        }
-        popularManga: Page(page: 1, perPage: 6) {
-          media(sort: [POPULARITY_DESC], type: MANGA) {
-            id
-            type
-            coverImage {
-              extraLarge
-
-              color
-            }
-            title {
-              english
-              userPreferred
-            }
-          }
+        title {
+          english
+          userPreferred
         }
       }
-    `,
-  });
+    }
+    popularAnime: Page(page: 1, perPage: 6) {
+      media(
+        sort: [POPULARITY_DESC]
+        type: ANIME
+        seasonYear: 2022
+        season: SUMMER
+        status: NOT_YET_RELEASED
+      ) {
+        id
+        type
+        coverImage {
+          extraLarge
+          color
+        }
+        title {
+          english
+          userPreferred
+        }
+      }
+    }
+    trendingManga: Page(page: 1, perPage: 6) {
+      media(sort: [TRENDING_DESC], type: MANGA) {
+        id
+        type
+        coverImage {
+          extraLarge
 
-  return {
-    props: data,
-  };
-}
+          color
+        }
+        title {
+          english
+          userPreferred
+        }
+      }
+    }
+    popularManga: Page(page: 1, perPage: 6) {
+      media(sort: [POPULARITY_DESC], type: MANGA) {
+        id
+        type
+        coverImage {
+          extraLarge
+
+          color
+        }
+        title {
+          english
+          userPreferred
+        }
+      }
+    }
+  }
+`;

@@ -4,7 +4,6 @@ import { Formik, Field } from 'formik';
 import { gql } from '@apollo/client';
 import client from '../apollo-client';
 import Box from '../../components/Box';
-import { getCookie } from 'cookies-next';
 
 const MyInput = ({ field, form, ...props }) => {
   return <input {...field} {...props} />;
@@ -12,7 +11,6 @@ const MyInput = ({ field, form, ...props }) => {
 
 export default function Page(props) {
   const router = useRouter();
-
   return (
     <motion.div
       className='h-full w-full overflow-x-hidden pt-2'
@@ -21,15 +19,14 @@ export default function Page(props) {
       exit={{ opacity: 0 }}>
       <div className='container w-10/12 mx-auto mt-4'>
         <Formik
-          initialValues={{ search: '', genre: 'Action' }}
+          initialValues={{ search: '', genre: '' }}
           onSubmit={(values) => {
             const valueToSend = values;
             for (let i in valueToSend) {
               if (valueToSend[i] === '') {
-                delete valueToSend.search;
+                delete valueToSend[i];
               }
             }
-            console.log(valueToSend);
             router.push({
               pathname: '/anime',
               query: { ...valueToSend },
@@ -62,6 +59,7 @@ export default function Page(props) {
                   placeholder='Search for anime'
                   as='select'
                   value={values.genre}>
+                  <option>Genre</option>
                   {props.genre.map((genre, id) => {
                     return (
                       <option key={id} className='capitalize' value={genre}>
@@ -92,39 +90,7 @@ export default function Page(props) {
 
 export async function getServerSideProps({ query }) {
   const { data } = await client.query({
-    query: gql`
-      query (
-        $search: String
-        $sort: [MediaSort]
-        $genre: String
-        $isAdult: Boolean
-        $type: MediaType
-        $page: Int
-        $perPage: Int
-      ) {
-        genre: GenreCollection
-        anime: Page(page: $page, perPage: $perPage) {
-          media(
-            search: $search
-            genre: $genre
-            sort: $sort
-            isAdult: $isAdult
-            type: $type
-          ) {
-            type
-            title {
-              english
-              userPreferred
-            }
-            id
-            coverImage {
-              color
-              extraLarge
-            }
-          }
-        }
-      }
-    `,
+    query: SearchQuery,
     variables: {
       ...query,
       sort: 'FAVOURITES_DESC',
@@ -138,3 +104,37 @@ export async function getServerSideProps({ query }) {
     props: data,
   };
 }
+
+const SearchQuery = gql`
+  query (
+    $search: String
+    $sort: [MediaSort]
+    $genre: String
+    $isAdult: Boolean
+    $type: MediaType
+    $page: Int
+    $perPage: Int
+  ) {
+    genre: GenreCollection
+    anime: Page(page: $page, perPage: $perPage) {
+      media(
+        search: $search
+        genre: $genre
+        sort: $sort
+        isAdult: $isAdult
+        type: $type
+      ) {
+        type
+        title {
+          english
+          userPreferred
+        }
+        id
+        coverImage {
+          color
+          extraLarge
+        }
+      }
+    }
+  }
+`;

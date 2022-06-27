@@ -4,14 +4,15 @@ import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { removeCookies } from 'cookies-next';
 import { useAuth } from '../pages/apollo-client';
-import UserDiv from './UserDiv';
 const NavBar = (props) => {
   const router = useRouter();
+  const { user, signOut } = useAuth();
+
   const Click = () => {
+    signOut();
     removeCookies('token');
     router.reload(window.location.pathname);
   };
-  const { user } = useAuth();
   return (
     <div className='fixed top-2 right-5 z-[1000000] transition-all'>
       <div>
@@ -27,7 +28,7 @@ const NavBar = (props) => {
         {Boolean(user) && (
           <>
             <div className=' w-[3.5rem] h-[3.5rem] relative group'>
-              <div className='avatar w-full h-full relative'>
+              <div className='avatar w-full h-full relative bg-slate-600 flex items-center justify-center font-bold  rounded-full'>
                 {user.avatar.large ? (
                   <Image
                     layout='fill'

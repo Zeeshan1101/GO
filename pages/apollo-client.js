@@ -37,7 +37,6 @@ function useProvideAuth() {
     if (authToken) {
       getUser();
     }
-    console.log(authToken);
   }, [authToken]);
 
   const query = gql`
@@ -57,7 +56,6 @@ function useProvideAuth() {
       query: query,
     });
     setUser(data.user);
-    console.log(data);
   };
 
   const getAuthHeaders = () => {
@@ -82,6 +80,7 @@ function useProvideAuth() {
 
   const signOut = () => {
     setAuthToken(null);
+    setUser(null);
   };
 
   const isSignedIn = () => {
