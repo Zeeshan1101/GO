@@ -19,7 +19,7 @@ export default function Page(props) {
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}>
       <Head>
-        <title>Anime</title>
+        <title>Manga</title>
       </Head>
       <div className='container w-10/12 mx-auto mt-4'>
         <Formik
@@ -32,7 +32,7 @@ export default function Page(props) {
               }
             }
             router.push({
-              pathname: '/anime',
+              pathname: '/manga',
               query: { ...valueToSend },
             });
           }}>
@@ -48,7 +48,7 @@ export default function Page(props) {
                   name='search'
                   type='text'
                   className='input'
-                  placeholder='Search for anime'
+                  placeholder='Search for manga'
                   value={values.search}
                   component={MyInput}
                 />
@@ -98,7 +98,7 @@ export async function getServerSideProps({ query }) {
       ...query,
       sort: 'FAVOURITES_DESC',
       isAdult: false,
-      type: 'ANIME',
+      type: 'MANGA',
       page: 1,
       perPage: 18,
     },

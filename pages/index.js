@@ -5,7 +5,10 @@ import { useAuth } from './apollo-client';
 import BoxList from '../components/BoxList';
 import { useQuery } from '@apollo/client/react';
 import Loader from '../components/Loader';
-export default function Home(props) {
+import SearchBar from '../components/SearchBar';
+import Head from 'next/head';
+
+export default function Home() {
   const { user } = useAuth();
   const { data, loading } = useQuery(HomePageQuery);
   if (loading) {
@@ -17,11 +20,14 @@ export default function Home(props) {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}>
-      <div className='container w-full  mx-auto text-4xl font-semibold text-gray-600 flex items-center justify-center capitalize'>
-        Welcome , {user ? `${user.name}` : '____________'}
+      <Head>
+        <title>Home</title>
+      </Head>
+      <div className='container md:w-1/4 sm:w-2/4  w-3/4 mx-auto text-4xl font-semibold text-gray-600 flex items-center justify-center capitalize relative'>
+        <SearchBar />
       </div>
       <>
-        <div className='container w-10/12 pt-3 mx-auto'>
+        <div className='container w-10/12 pt-1 mx-auto'>
           <div className='trending-content w-full'>
             <BoxList
               title='Trending Anime'

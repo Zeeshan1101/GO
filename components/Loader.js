@@ -1,13 +1,16 @@
 import React, { useEffect, useState } from 'react';
-
+import Head from 'next/head';
 const Loader = () => {
   const [q, setQ] = useState();
   useEffect(() => {
-    const quote = Math.floor(Math.random() * AnimeQuote.length - 1);
+    const quote = Math.floor(Math.random() * AnimeQuote.length);
     setQ(quote);
   }, []);
   return (
     <div className='w-full h-full flex justify-center items-center'>
+      <Head>
+        <title>Loading...</title>
+      </Head>
       <div className='w-10/12 text-center'>
         <div className='w-[max-content] max-w-full break-words mx-auto'>
           {q ? (

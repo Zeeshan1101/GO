@@ -27,8 +27,8 @@ const NavBar = (props) => {
         )}
         {Boolean(user) && (
           <>
-            <div className=' w-[3.5rem] h-[3.5rem] relative group'>
-              <div className='avatar w-full h-full relative bg-slate-600 flex items-center justify-center font-bold  rounded-full'>
+            <div className=' w-[3.5rem] h-[3.5rem] relative group '>
+              <div className='avatar w-full h-full relative bg-slate-600 flex items-center justify-center font-bold  rounded-full    '>
                 {user.avatar.large ? (
                   <Image
                     layout='fill'
@@ -42,7 +42,7 @@ const NavBar = (props) => {
                   </div>
                 )}
               </div>
-              <div className='w-[max-content] h-[max-content] absolute -bottom-[2rem] px-[0.8rem] pt-6 pb-2   -z-10 left-1/2 -translate-x-1/2 bg-slate-300 text-slate-500 rounded-t-lg rounded-b-full shadow-xl flex flex-col gap-1 align-middle items-center justify-center opacity-0 group-hover:opacity-100 group-hover:-bottom-[290%]  transition-all duration-500'>
+              <div className='w-full h-[max-content] absolute -bottom-[2rem] px-[0.8rem] pt-6 pb-2   -z-10 left-1/2 -translate-x-1/2 bg-slate-300 text-slate-500 rounded-t-xl rounded-b-full shadow-xl flex flex-col gap-1 align-middle items-center justify-center opacity-0 group-hover:opacity-100 group-hover:translate-y-[70%]  transition-all duration-500'>
                 <Link href='/'>
                   <a>
                     <span className='material-symbols-rounded'>home</span>
@@ -55,7 +55,7 @@ const NavBar = (props) => {
                     </span>
                   </a>
                 </Link>
-                <Link href='/'>
+                <Link href='/manga'>
                   <a>
                     <span className='material-symbols-rounded'>
                       import_contacts

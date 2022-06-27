@@ -12,7 +12,10 @@ import Timer from '../../components/Timer';
 import invert from 'invert-color';
 import { useQuery } from '@apollo/client/react';
 import Loader from '../../components/Loader';
-export default function Anime(props) {
+import Head from 'next/head';
+import Link from 'next/link';
+
+export default function Anime() {
   const { query } = useRouter();
   const [CurrentTab, setCurrentTab] = useState('relations');
   const { data, loading } = useQuery(AnimeQuery, {
@@ -32,7 +35,10 @@ export default function Anime(props) {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}>
-      <div className='h-1/3 w-full absolute top-0 left-0 pt-2 '>
+      <Head>
+        <title>{anime.title.english || anime.title.userPreferred}</title>
+      </Head>
+      <div className='h-1/3 w-full absolute top-0 left-0 pt-2 px-1'>
         <div className='h-full w-full absolute z-10 top-0 bg-slate-300 bg-opacity-40 font-bold'>
           {anime.nextAiringEpisode && (
             <Timer
@@ -43,7 +49,7 @@ export default function Anime(props) {
         </div>
         {anime.bannerImage && (
           <>
-            <div className='h-full w-[99%] relative mx-auto'>
+            <div className='h-full w-full relative mx-auto '>
               <Image
                 priority
                 className='rounded-t-2xl'
@@ -69,18 +75,21 @@ export default function Anime(props) {
           <div
             className={`w-full flex relative left-1/2 -translate-x-1/2 justify-evenly flex-wrap md:max-w-xl md:hidden pt-5 gap-y-1`}>
             {anime.genres.map((genre, id) => (
-              <div
-                key={id}
-                className='px-4 py-2 rounded-xl text-sm'
-                style={{
-                  backgroundColor: anime.coverImage.color || '#2F0882',
-                  color: invert(anime.coverImage.color || '#2F0882', {
-                    black: '#475569',
-                    white: '#F1F5F9',
-                  }),
-                }}>
-                {genre}
-              </div>
+              <Link key={id} href={`anime?genre=${genre}`}>
+                <a>
+                  <div
+                    className='px-4 py-2 rounded-xl text-sm'
+                    style={{
+                      backgroundColor: anime.coverImage.color || '#2F0882',
+                      color: invert(anime.coverImage.color || '#2F0882', {
+                        black: '#475569',
+                        white: '#F1F5F9',
+                      }),
+                    }}>
+                    {genre}
+                  </div>
+                </a>
+              </Link>
             ))}
           </div>
           <Tab
@@ -151,18 +160,21 @@ export default function Anime(props) {
             <div className='container w-11/12 md:pt-4'>
               <div className='md:flex flex-wrap hidden gap-1 gap-y-1'>
                 {anime.genres.map((genre, id) => (
-                  <div
-                    key={id}
-                    className='px-3  rounded-xl'
-                    style={{
-                      backgroundColor: anime.coverImage.color || '#2F0882',
-                      color: invert(anime.coverImage.color || '#2F0882', {
-                        black: '#475569',
-                        white: '#F1F5F9',
-                      }),
-                    }}>
-                    {genre}
-                  </div>
+                  <Link key={id} href={`/anime?genre=${genre}`}>
+                    <a>
+                      <div
+                        className='px-3  rounded-xl'
+                        style={{
+                          backgroundColor: anime.coverImage.color || '#2F0882',
+                          color: invert(anime.coverImage.color || '#2F0882', {
+                            black: '#475569',
+                            white: '#F1F5F9',
+                          }),
+                        }}>
+                        {genre}
+                      </div>
+                    </a>
+                  </Link>
                 ))}
               </div>
             </div>

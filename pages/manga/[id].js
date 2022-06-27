@@ -12,6 +12,8 @@ import CharacterBox from '../../components/CharacterBox';
 import invert from 'invert-color';
 import { useQuery } from '@apollo/client/react';
 import Loader from '../../components/Loader';
+import Head from 'next/head';
+import Link from 'next/link';
 
 export default function Manga(props) {
   const { query } = useRouter();
@@ -33,7 +35,10 @@ export default function Manga(props) {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}>
-      <div className='h-1/3 w-full absolute top-0 left-0 pt-2 '>
+      <Head>
+        <title>{manga.title.english || manga.title.userPreferred}</title>
+      </Head>
+      <div className='h-1/3 w-full absolute top-0 left-0 pt-2 px-1'>
         <div className='h-full w-full absolute z-10 top-0 bg-slate-300 bg-opacity-40 font-bold'></div>
         {manga.bannerImage && (
           <>
@@ -63,18 +68,21 @@ export default function Manga(props) {
           <div
             className={`w-full flex relative left-1/2 -translate-x-1/2 justify-evenly flex-wrap md:max-w-xl md:hidden pt-5 gap-y-1`}>
             {manga.genres.map((genre, id) => (
-              <div
-                key={id}
-                className='px-4 py-2 rounded-xl text-sm'
-                style={{
-                  backgroundColor: manga.coverImage.color || '#2F0882',
-                  color: invert(manga.coverImage.color || '#2F0882', {
-                    black: '#475569',
-                    white: '#F1F5F9',
-                  }),
-                }}>
-                {genre}
-              </div>
+              <Link key={id} href={`/manga?genre=${genre}`}>
+                <a>
+                  <div
+                    className='px-4 py-2 rounded-xl text-sm'
+                    style={{
+                      backgroundColor: manga.coverImage.color || '#2F0882',
+                      color: invert(manga.coverImage.color || '#2F0882', {
+                        black: '#475569',
+                        white: '#F1F5F9',
+                      }),
+                    }}>
+                    {genre}
+                  </div>
+                </a>
+              </Link>
             ))}
           </div>
           <Tab
@@ -143,18 +151,22 @@ export default function Manga(props) {
             <div className='container w-11/12 md:pt-4'>
               <div className='md:flex flex-wrap hidden gap-1 gap-y-1'>
                 {manga.genres.map((genre, id) => (
-                  <div
-                    key={id}
-                    className='px-3  rounded-xl'
-                    style={{
-                      backgroundColor: manga.coverImage.color || '#2F0882',
-                      color: invert(manga.coverImage.color || '#2F0882', {
-                        black: '#475569',
-                        white: '#F1F5F9',
-                      }),
-                    }}>
-                    {genre}
-                  </div>
+                  <Link key={id} href={`/manga?genre=${genre}`}>
+                    <a>
+                      <div
+                        key={id}
+                        className='px-3  rounded-xl'
+                        style={{
+                          backgroundColor: manga.coverImage.color || '#2F0882',
+                          color: invert(manga.coverImage.color || '#2F0882', {
+                            black: '#475569',
+                            white: '#F1F5F9',
+                          }),
+                        }}>
+                        {genre}
+                      </div>
+                    </a>
+                  </Link>
                 ))}
               </div>
             </div>
