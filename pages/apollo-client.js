@@ -31,6 +31,7 @@ function useProvideAuth() {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
+    console.log(user);
     if (getCookie('token')) {
       setAuthToken(getCookie('token'));
     }

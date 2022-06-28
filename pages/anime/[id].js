@@ -4,18 +4,22 @@ import Image from 'next/image';
 import parse from 'html-react-parser';
 import Description from '../../components/Description';
 import { useRouter } from 'next/router';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Tab from '../../components/Tab';
 import Box from '../../components/Box';
 import CharacterBox from '../../components/CharacterBox';
 import Timer from '../../components/Timer';
 import invert from 'invert-color';
-import { useQuery } from '@apollo/client/react';
+import { useLazyQuery, useQuery } from '@apollo/client/react';
 import Loader from '../../components/Loader';
 import Head from 'next/head';
 import Link from 'next/link';
+import { useAuth } from '../apollo-client';
+import client from '../apollo-client';
+import UserStatus from '../../components/UserStatus';
 
 export default function Anime() {
+  const { user } = useAuth();
   const { query } = useRouter();
   const [CurrentTab, setCurrentTab] = useState('relations');
   const { data, loading } = useQuery(AnimeQuery, {
@@ -27,18 +31,18 @@ export default function Anime() {
   if (loading) {
     return <Loader />;
   }
+
   const { anime } = data;
-  console.log(anime);
   return (
     <motion.div
-      className='h-full w-full overflow-x-hidden'
+      className='h-full w-full relative overflow-x-hidden'
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}>
       <Head>
         <title>{anime.title.english || anime.title.userPreferred}</title>
       </Head>
-      <div className='h-1/3 w-full absolute top-0 left-0 pt-2 px-1'>
+      <div className='h-1/3 w-full absolute top-2 px-2'>
         <div className='h-full w-full absolute z-10 top-0 bg-slate-300 bg-opacity-40 font-bold'>
           {anime.nextAiringEpisode && (
             <Timer
@@ -128,20 +132,29 @@ export default function Anime() {
             alt={anime.title.userPreferred}
           />
         </div>
-        <div className='w-[max-content] relative mx-auto '>
+        <div className='w-[max-content]  mx-auto '>
           <div className='w-[max-content] relative top-1/2 -translate-1/2 mx-2 md:text-left text-center'>
-            <span
-              className='w-[max-content] px-2 py-1 rounded-lg absolute -top-[40px] md:translate-x-0 -translate-x-1/2 '
-              style={{
-                backgroundColor: anime.coverImage.color || '#2F0882',
-                color: invert(anime.coverImage.color || '#2F0882', {
-                  black: '#475569',
-                  white: '#F1F5F9',
-                }),
-              }}>
-              {anime.status.replace(/_/g, ' ')}
-            </span>
-            <div className='lg:text-5xl md:text-4xl sm:text-3xl text-lg font-semibold '>
+            <div className='w-[max-content] md:absolute md:-top-10 md:left-0 md:-mt-0  md:-translate-x-0 relative -mt-11 pt-2 flex md:gap-3 gap-3 md:flex-row flex-col-reverse mx-auto'>
+              <div
+                className='min-w-[max-content] md:w-[max-content] w-44 px-7 py-1 rounded-lg '
+                style={{
+                  backgroundColor: anime.coverImage.color || '#2F0882',
+                  color: invert(anime.coverImage.color || '#2F0882', {
+                    black: '#475569',
+                    white: '#F1F5F9',
+                  }),
+                }}>
+                {anime.status.replace(/_/g, ' ')}
+              </div>
+              {user && (
+                <UserStatus
+                  color={anime.coverImage.color}
+                  media='anime'
+                  id={query.id}
+                />
+              )}
+            </div>
+            <div className='lg:text-5xl md:text-4xl sm:text-3xl text-lg font-semibold text-ellipsis '>
               {anime.title.english || anime.title.userPreferred}
             </div>
 

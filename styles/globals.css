@@ -16,3 +16,9 @@
     @apply bg-slate-300;
   }
 }
+@layer utilities {
+  .btn:active:hover,
+  .btn:active:focus {
+    transform: none;
+  }
+}

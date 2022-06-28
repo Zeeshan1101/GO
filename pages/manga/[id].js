@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 import { gql } from '@apollo/client';
-import client from '../apollo-client';
+import { useAuth } from '../apollo-client';
 import Image from 'next/image';
 import parse from 'html-react-parser';
 import Description from '../../components/Description';
@@ -14,8 +14,10 @@ import { useQuery } from '@apollo/client/react';
 import Loader from '../../components/Loader';
 import Head from 'next/head';
 import Link from 'next/link';
+import UserStatus from '../../components/UserStatus';
 
 export default function Manga(props) {
+  const { user } = useAuth();
   const { query } = useRouter();
   const [CurrentTab, setCurrentTab] = useState('relations');
   const { data, loading } = useQuery(MangaQuery, {
@@ -28,21 +30,20 @@ export default function Manga(props) {
     return <Loader />;
   }
   const { manga } = data;
-  console.log(manga);
   return (
     <motion.div
-      className='h-full w-full overflow-x-hidden'
+      className='h-full w-full relative overflow-x-hidden'
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}>
       <Head>
         <title>{manga.title.english || manga.title.userPreferred}</title>
       </Head>
-      <div className='h-1/3 w-full absolute top-0 left-0 pt-2 px-1'>
+      <div className='h-1/3 w-full absolute top-2 px-2'>
         <div className='h-full w-full absolute z-10 top-0 bg-slate-300 bg-opacity-40 font-bold'></div>
         {manga.bannerImage && (
           <>
-            <div className='h-full w-[99%] relative mx-auto'>
+            <div className='h-full w-full relative mx-auto'>
               <Image
                 priority
                 className='rounded-t-2xl'
@@ -63,7 +64,9 @@ export default function Manga(props) {
       </div>
       <div className='h-[max-content] w-full absolute top-1/3 mt-48 bg-slate-300 pb-20'>
         <div className='container w-9/12 mx-auto'>
-          <Description>{parse(manga.description)}</Description>
+          <Description>
+            {manga.description && parse(manga.description)}
+          </Description>
 
           <div
             className={`w-full flex relative left-1/2 -translate-x-1/2 justify-evenly flex-wrap md:max-w-xl md:hidden pt-5 gap-y-1`}>
@@ -123,18 +126,27 @@ export default function Manga(props) {
         </div>
         <div className='w-[max-content] relative mx-auto '>
           <div className='w-[max-content] relative top-1/2 -translate-1/2 mx-2 md:text-left text-center'>
-            <span
-              className='w-[max-content] px-2 py-1 rounded-lg absolute -top-[40px] md:translate-x-0 -translate-x-1/2 '
-              style={{
-                backgroundColor: manga.coverImage.color || '#2F0882',
-                color: invert(manga.coverImage.color || '#2F0882', {
-                  black: '#475569',
-                  white: '#F1F5F9',
-                }),
-              }}>
-              {manga.status.replace(/_/g, ' ')}
+            <span className='w-[max-content] md:absolute md:-top-10 md:left-0 md:-mt-0  md:-translate-x-0 relative -mt-12 pt-2 flex md:gap-3 gap-3 md:flex-row flex-col-reverse mx-auto'>
+              <div
+                className='md:w-[max-content] w-44 px-2 py-1 rounded-lg '
+                style={{
+                  backgroundColor: manga.coverImage.color || '#2F0882',
+                  color: invert(manga.coverImage.color || '#2F0882', {
+                    black: '#475569',
+                    white: '#F1F5F9',
+                  }),
+                }}>
+                {manga.status.replace(/_/g, ' ')}
+              </div>
+              {user && (
+                <UserStatus
+                  color={manga.coverImage.color}
+                  media='manga'
+                  id={query.id}
+                />
+              )}
             </span>
-            <div className='lg:text-5xl md:text-4xl sm:text-3xl text-lg font-semibold '>
+            <div className='lg:text-5xl md:text-4xl sm:text-3xl text-lg font-semibold  text-ellipsis'>
               {manga.title.english || manga.title.userPreferred}
             </div>
 
@@ -175,24 +187,6 @@ export default function Manga(props) {
       </div>
     </motion.div>
   );
-}
-export async function getStaticPaths() {
-  return {
-    paths: [],
-    fallback: true,
-  };
-}
-export async function getStaticProps({ params }) {
-  const { data } = await client.query({
-    query: MangaQuery,
-    variables: {
-      id: params.id,
-      sort: 'ID',
-    },
-  });
-  return {
-    props: data,
-  };
 }
 
 const MangaQuery = gql`

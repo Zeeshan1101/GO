@@ -14,7 +14,7 @@ const NavBar = (props) => {
     router.reload(window.location.pathname);
   };
   return (
-    <div className='fixed top-2 right-5 z-[1000000] transition-all'>
+    <div className='fixed top-2 right-3 z-[1000000] transition-all'>
       <div>
         {!Boolean(user) && (
           <Link href='https://anilist.co/api/v2/oauth/authorize?client_id=8618&redirect_uri=http://localhost:3000/api/login&response_type=code'>

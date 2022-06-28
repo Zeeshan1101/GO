@@ -5,6 +5,7 @@ import { gql } from '@apollo/client';
 import client from '../apollo-client';
 import Box from '../../components/Box';
 import Head from 'next/head';
+import Loader from '../../components/Loader';
 
 const MyInput = ({ field, form, ...props }) => {
   return <input {...field} {...props} />;
@@ -12,6 +13,7 @@ const MyInput = ({ field, form, ...props }) => {
 
 export default function Page(props) {
   const router = useRouter();
+
   return (
     <motion.div
       className='h-full w-full overflow-x-hidden pt-2'
@@ -92,7 +94,7 @@ export default function Page(props) {
 }
 
 export async function getServerSideProps({ query }) {
-  const { data } = await client.query({
+  const { data, loading } = await client.query({
     query: SearchQuery,
     variables: {
       ...query,
@@ -104,7 +106,7 @@ export async function getServerSideProps({ query }) {
     },
   });
   return {
-    props: data,
+    props: { ...data },
   };
 }
 

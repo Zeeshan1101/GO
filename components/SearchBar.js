@@ -24,11 +24,13 @@ const SearchBar = () => {
               id='type'
               name='type'
               type='select'
-              className='select rounded-full absolute left-0 bottom-0 focus:outline-0'
+              className='select rounded-full absolute left-0 bottom-0 focus:outline-0 flex '
               placeholder='Search for anime'
               as='select'
               value={values.type}>
-              <option value='anime'>Anime</option>
+              <option value='anime' className='p-1'>
+                Anime
+              </option>
               <option value='manga'>Manga</option>
             </Field>
             <Field
