@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 const UserStatus = ({ color, id, media }) => {
   const { user } = useAuth();
   const ref = useRef();
+  const [status, setStatus] = useState();
   const [show, setShow] = useState(false);
   const [load, setLoad] = useState(false);
   useEffect(() => {
@@ -19,23 +20,22 @@ const UserStatus = ({ color, id, media }) => {
       document.removeEventListener('click', handleClickOutside, false);
     };
   });
-  const { data, loading } = useQuery(
-    UserQuery,
-    {
-      variables: {
-        userId: user.id,
-        id: id,
-      },
+  const { data, loading } = useQuery(UserQuery, {
+    variables: {
+      userId: user.id,
+      id: id,
     },
-    []
-  );
-  const [statusCompleted] = useMutation(StatusMutation, {
+    onCompleted: (data) => {
+      setStatus(data.status.status);
+    },
+  });
+  const [statusCompleted, { data: data1 }] = useMutation(StatusMutation, {
     variables: {
       mediaId: id,
       status: 'COMPLETED',
     },
     onCompleted: (data) => {
-      console.log(data);
+      setStatus(data.status.status);
       setShow(!show);
       setLoad(false);
     },
@@ -47,7 +47,7 @@ const UserStatus = ({ color, id, media }) => {
       status: 'PLANNING',
     },
     onCompleted: (data) => {
-      console.log(data);
+      setStatus(data.status.status);
       setShow(!show);
       setLoad(false);
     },
@@ -59,7 +59,7 @@ const UserStatus = ({ color, id, media }) => {
       status: 'CURRENT',
     },
     onCompleted: (data) => {
-      console.log(data);
+      setStatus(data.status.status);
       setShow(!show);
       setLoad(false);
     },
@@ -71,7 +71,7 @@ const UserStatus = ({ color, id, media }) => {
       status: 'DROPPED',
     },
     onCompleted: (data) => {
-      console.log(data);
+      setStatus(data.status.status);
       setShow(!show);
       setLoad(false);
     },
@@ -86,9 +86,10 @@ const UserStatus = ({ color, id, media }) => {
       white: '#F1F5F9',
     }),
   };
+
   return (
     <>
-      <div ref={ref} className='relative w-full'>
+      <div ref={ref} className='relative w-full z-[100]'>
         <AnimatePresence>
           {show && (
             <motion.div
@@ -127,16 +128,17 @@ const UserStatus = ({ color, id, media }) => {
           )}
         </AnimatePresence>
         <button
-          className={`w-44 px-3 h-4 max-h-1 min-h-[2rem] md:mx-0 mx-auto  flex items-center z-20 justify-center rounded-lg uppercase btn border-none no-animation ${
+          className={`w-44 px-3 h-4 max-h-1 min-h-[2rem] relative md:mx-0 mx-auto text-center flex items-center z-20 justify-center rounded-lg uppercase btn border-none no-animation ${
             load ? 'loading' : ''
           }`}
           onClick={() => setShow(!show)}
           style={styles}>
-          {data ? displayStatus(data.status.status, media) : 'Add To List'}
+          {status ? displayStatus(status, media) : 'Add To List'}
           <span
-            className={`material-symbols-rounded -rotate-90 transition-all ${
+            className={`material-symbols-rounded -rotate-90 transition-all absolute right-2 ${
               show ? '-rotate-180' : ''
-            }`}>
+            }`}
+            style={styles}>
             expand_more
           </span>
         </button>
@@ -157,7 +159,7 @@ const displayStatus = (status, media) => {
     case 'REPEATING':
       return 'Rewatching';
     default:
-      return '';
+      return 'NO status';
   }
 };
 
@@ -171,7 +173,7 @@ const UserQuery = gql`
 `;
 const StatusMutation = gql`
   mutation SaveMediaListEntry($mediaId: Int, $status: MediaListStatus) {
-    SaveMediaListEntry(mediaId: $mediaId, status: $status) {
+    status: SaveMediaListEntry(mediaId: $mediaId, status: $status) {
       id
       status
     }

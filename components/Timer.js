@@ -19,7 +19,7 @@ const Timer = ({ time, color }) => {
     return () => clearInterval(id);
   });
   return (
-    <div className='absolute right-5 bottom-2'>
+    <div className='absolute right-5 bottom-2 '>
       <div className='tooltip' data-tip={moment(t).calendar()}>
         <span
           className='countdown font-mono sm:text-2xl text-lg'

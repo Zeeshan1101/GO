@@ -42,37 +42,39 @@ export default function Anime() {
       <Head>
         <title>{anime.title.english || anime.title.userPreferred}</title>
       </Head>
-      <div className='h-1/3 w-full absolute top-2 px-2'>
-        <div className='h-full w-full absolute z-10 top-0 bg-slate-300 bg-opacity-40 font-bold'>
-          {anime.nextAiringEpisode && (
-            <Timer
-              time={anime.nextAiringEpisode.airingAt}
-              color={anime.coverImage.color || '#2F0882'}
-            />
+      <div className='h-1/3 w-full absolute top-2 px-2 '>
+        <div className='h-full w-full overflow-hidden rounded-t-2xl'>
+          <div className='h-full w-full absolute z-10 top-0 bg-slate-300 bg-opacity-40 font-bold'>
+            {anime.nextAiringEpisode && (
+              <Timer
+                time={anime.nextAiringEpisode.airingAt}
+                color={anime.coverImage.color || '#2F0882'}
+              />
+            )}
+          </div>
+          {anime.bannerImage && (
+            <>
+              <div className='h-[50vh] w-full relative mx-auto [clip-path:inset(0_0_33.5%_0)] [shape-outside:inset(0_0_33.5%_0)] md:scale-100 scale-[1.3]'>
+                <Image
+                  priority
+                  className='rounded-t-2xl'
+                  layout='fill'
+                  src={anime.bannerImage}
+                  alt={anime.title.userPreferred}
+                />
+              </div>
+              <div className='w-full h-1/5 absolute blur-2xl bottom-[-10px] left-1/2 -translate-x-1/2'>
+                <div
+                  className='w-full h-full relative '
+                  style={{
+                    backgroundColor: anime.coverImage.color || '#2F0882',
+                  }}></div>
+              </div>
+            </>
           )}
         </div>
-        {anime.bannerImage && (
-          <>
-            <div className='h-full w-full relative mx-auto '>
-              <Image
-                priority
-                className='rounded-t-2xl'
-                layout='fill'
-                src={anime.bannerImage}
-                alt={anime.title.userPreferred}
-              />
-            </div>
-            <div className='w-full h-1/5 absolute blur-2xl bottom-[-10px] left-1/2 -translate-x-1/2'>
-              <div
-                className='w-full h-full relative '
-                style={{
-                  backgroundColor: anime.coverImage.color || '#2F0882',
-                }}></div>
-            </div>
-          </>
-        )}
       </div>
-      <div className='h-[max-content] w-full absolute top-1/3 mt-48 bg-slate-300 pb-20'>
+      <div className='h-[max-content] w-full absolute top-1/3 mt-56 bg-slate-300 pb-20'>
         <div className='container w-9/12 mx-auto'>
           <Description>{parse(anime.description)}</Description>
 
@@ -122,73 +124,76 @@ export default function Anime() {
           )}
         </div>
       </div>
-
-      <div className='h-[max-content] w-[max-content] relative top-1/3 mx-auto -translate-y-1/2 z-[100] md:grid md:grid-flow-col '>
-        <div className='md:h-[21rem] md:w-[14rem] h-[18rem] w-[12rem] relative border-b-0 border-[4px] border-slate-300 mx-auto scale-80'>
-          <Image
-            priority
-            layout='fill'
-            src={anime.coverImage.extraLarge}
-            alt={anime.title.userPreferred}
-          />
-        </div>
-        <div className='w-[max-content]  mx-auto '>
-          <div className='w-[max-content] relative top-1/2 -translate-1/2 mx-2 md:text-left text-center'>
-            <div className='w-[max-content] md:absolute md:-top-10 md:left-0 md:-mt-0  md:-translate-x-0 relative -mt-11 pt-2 flex md:gap-3 gap-3 md:flex-row flex-col-reverse mx-auto'>
-              <div
-                className='min-w-[max-content] md:w-[max-content] w-44 px-7 py-1 rounded-lg '
-                style={{
-                  backgroundColor: anime.coverImage.color || '#2F0882',
-                  color: invert(anime.coverImage.color || '#2F0882', {
-                    black: '#475569',
-                    white: '#F1F5F9',
-                  }),
-                }}>
-                {anime.status.replace(/_/g, ' ')}
+      <div className='md:w-9/12 w-[max-content] mx-auto relative top-1/3  -translate-y-1/2 z-[100]'>
+        <div className='h-[max-content] w-[max-content]  md:grid md:grid-flow-col '>
+          <div className='md:h-[21rem] md:w-[14rem] h-[18rem] w-[12rem] relative border-b-0  border-slate-300 mx-auto md:mt-0 mt-4 scale-80'>
+            <Image
+              priority
+              className='z-[100]'
+              layout='fill'
+              src={anime.coverImage.extraLarge}
+              alt={anime.title.userPreferred}
+            />
+          </div>
+          <div className='w-[max-content]  mx-auto '>
+            <div className='w-[max-content] relative top-1/2 -translate-1/2 mx-2 md:text-left text-center'>
+              <div className='w-[max-content] md:absolute md:-top-10 md:left-0 md:-mt-0  md:-translate-x-0 relative -mt-11 pt-2 flex md:gap-3 gap-3 md:flex-row flex-col-reverse mx-auto'>
+                <div
+                  className='min-w-[max-content] md:w-[max-content] w-44 font-[510] min-h-[2rem] text-sm px-7 py-[0.4rem] rounded-lg '
+                  style={{
+                    backgroundColor: anime.coverImage.color || '#2F0882',
+                    color: invert(anime.coverImage.color || '#2F0882', {
+                      black: '#475569',
+                      white: '#F1F5F9',
+                    }),
+                  }}>
+                  {anime.status.replace(/_/g, ' ')}
+                </div>
+                {user && (
+                  <UserStatus
+                    color={anime.coverImage.color}
+                    media='anime'
+                    id={query.id}
+                  />
+                )}
               </div>
-              {user && (
-                <UserStatus
-                  color={anime.coverImage.color}
-                  media='anime'
-                  id={query.id}
-                />
+              <div className='lg:text-3xl md:text-2xl sm:text-xl text-lg font-semibold pt-3 text-ellipsis '>
+                {anime.title.english || anime.title.userPreferred}
+              </div>
+
+              {(anime.episodes || anime.nextAiringEpisode) && (
+                <div className=' lg:text-left'>
+                  {Boolean(anime.episodes) ? 'Total' : 'Next'} Episode:
+                  <span
+                    className='font-bold text-xl'
+                    style={{ color: anime.coverImage.color || '#2F0882' }}>
+                    {(anime.nextAiringEpisode &&
+                      anime.nextAiringEpisode.episode) ||
+                      anime.episodes}
+                  </span>
+                </div>
               )}
-            </div>
-            <div className='lg:text-5xl md:text-4xl sm:text-3xl text-lg font-semibold text-ellipsis '>
-              {anime.title.english || anime.title.userPreferred}
-            </div>
-
-            {(anime.episodes || anime.nextAiringEpisode) && (
-              <div className=' lg:text-left'>
-                {Boolean(anime.episodes) ? 'Total' : 'Next'} Episode:
-                <span
-                  className='font-bold text-xl'
-                  style={{ color: anime.coverImage.color || '#2F0882' }}>
-                  {(anime.nextAiringEpisode &&
-                    anime.nextAiringEpisode.episode) ||
-                    anime.episodes}
-                </span>
-              </div>
-            )}
-            <div className='container w-11/12 md:pt-4'>
-              <div className='md:flex flex-wrap hidden gap-1 gap-y-1'>
-                {anime.genres.map((genre, id) => (
-                  <Link key={id} href={`/anime?genre=${genre}`}>
-                    <a>
-                      <div
-                        className='px-3  rounded-xl'
-                        style={{
-                          backgroundColor: anime.coverImage.color || '#2F0882',
-                          color: invert(anime.coverImage.color || '#2F0882', {
-                            black: '#475569',
-                            white: '#F1F5F9',
-                          }),
-                        }}>
-                        {genre}
-                      </div>
-                    </a>
-                  </Link>
-                ))}
+              <div className='container w-11/12 md:pt-4'>
+                <div className='md:flex flex-wrap hidden gap-1 gap-y-1'>
+                  {anime.genres.map((genre, id) => (
+                    <Link key={id} href={`/anime?genre=${genre}`}>
+                      <a>
+                        <div
+                          className='px-3  rounded-xl'
+                          style={{
+                            backgroundColor:
+                              anime.coverImage.color || '#2F0882',
+                            color: invert(anime.coverImage.color || '#2F0882', {
+                              black: '#475569',
+                              white: '#F1F5F9',
+                            }),
+                          }}>
+                          {genre}
+                        </div>
+                      </a>
+                    </Link>
+                  ))}
+                </div>
               </div>
             </div>
           </div>
