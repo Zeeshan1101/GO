@@ -1,17 +1,19 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
+import { motion } from "framer-motion";
 
 const Description = ({ children }) => {
   const [showMore, setShowMore] = useState(false);
   return (
     <>
-      <div
-        className={`${
-          showMore ? 'line-clamp-none' : 'line-clamp-4'
-        } transition-all duration-300`}>
+      <motion.div
+        className={`w-full whitespace-wrap overflow-hidden  ${
+          showMore ? "" : "text-ellipsis"
+        }`}
+        animate={{ height: showMore ? "100%" : "50px" }}>
         {children}
-      </div>
+      </motion.div>
       <button onClick={() => setShowMore(!showMore)}>
-        {showMore ? 'Show Less' : 'Show More'}
+        {showMore ? "Show Less" : "Show More"}
       </button>
     </>
   );

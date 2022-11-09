@@ -80,7 +80,6 @@ const UserStatus = ({ color, id, media }) => {
   if (loading) {
     return <div></div>;
   }
-  console.log(data);
   const styles = {
     backgroundColor: color || "#2F0882",
     color: invert(color || "#2F0882", {
@@ -91,7 +90,7 @@ const UserStatus = ({ color, id, media }) => {
 
   return (
     <>
-      <div ref={ref} className="w-full z-[100] flex items-center">
+      <div ref={ref} className="w-full z-[100] flex items-center transition">
         <div className="w-44 relative">
           <AnimatePresence>
             {show && (
@@ -138,7 +137,9 @@ const UserStatus = ({ color, id, media }) => {
             style={styles}>
             {status ? displayStatus(status, media) : "Add To List"}
             {"  "}
-            {status === "CURRENT" ? data.status.progress : ""}
+            {status === "CURRENT" && data.status.progress
+              ? data.status.progress
+              : ""}
             <span
               className={`material-symbols-rounded -rotate-90 transition-all absolute right-2 ${
                 show ? "-rotate-180" : ""

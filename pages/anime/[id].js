@@ -17,6 +17,7 @@ import Link from "next/link";
 import { useAuth } from "../apollo-client";
 import client from "../apollo-client";
 import UserStatus from "../../components/UserStatus";
+import SongsList from "../../components/SongsList";
 
 export default function Anime() {
   const { user } = useAuth();
@@ -54,7 +55,7 @@ export default function Anime() {
           </div>
           {anime.bannerImage && (
             <>
-              <div className="h-[50vh] w-full relative mx-auto [clip-path:inset(0_0_33.5%_0)] [shape-outside:inset(0_0_33.5%_0)] md:scale-100 scale-[1.3]">
+              <div className="h-[50vh] w-full relative mx-auto md:   md:[shape-outside:inset(0_0_33.5%_0)] [clip-path:inset(0_0_33.5%_0)] [shape-outside:inset(0_0_33.5%_0)] md:scale-100 scale-[1.6]">
                 <Image
                   priority
                   className="rounded-t-2xl"
@@ -76,8 +77,9 @@ export default function Anime() {
       </div>
       <div className="h-[max-content] w-full absolute top-1/3 mt-56 bg-slate-300 pb-20">
         <div className="container w-9/12 mx-auto">
-          <Description>{parse(anime.description)}</Description>
-
+          {anime.description && (
+            <Description>{parse(anime.description)}</Description>
+          )}
           <div
             className={`w-full flex relative left-1/2 -translate-x-1/2 justify-evenly flex-wrap md:max-w-xl md:hidden pt-5 gap-y-1`}>
             {anime.genres.map((genre, id) => (
@@ -103,9 +105,8 @@ export default function Anime() {
             setCurrentTab={setCurrentTab}
             color={anime.coverImage.color || "#2F0882"}
           />
-
           {CurrentTab === "relations" && (
-            <div
+            <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
@@ -113,20 +114,40 @@ export default function Anime() {
               {anime.relations.edges.slice(0, 12).map((anime) => (
                 <Box key={anime.id} id={anime.id} data={anime.node} />
               ))}
-            </div>
+            </motion.div>
           )}
           {CurrentTab === "character" && (
-            <div className="container  grid  md:grid-cols-4 sm:grid-cols-2 grid-cols-1 gap-2 gap-y-5 px-10 mt-10 md:px-0 ">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="container  grid  md:grid-cols-4 sm:grid-cols-2 grid-cols-1 gap-2 gap-y-5 px-10 mt-10 md:px-0 ">
               {anime.characters.edges.map((character, id) => (
                 <CharacterBox key={id} data={character} />
               ))}
-            </div>
+            </motion.div>
+          )}
+          {CurrentTab === "media" && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="container  ">
+              <SongsList
+                search={anime.title.english || anime.title.userPreferred}
+              />
+            </motion.div>
           )}
         </div>
       </div>
       <div className="md:w-9/12 w-[max-content] mx-auto relative top-1/3  -translate-y-1/2 z-[100]">
         <div className="h-[max-content] w-[max-content]  md:grid md:grid-flow-col ">
-          <div className="md:h-[21rem] md:w-[14rem] h-[18rem] w-[12rem] relative border-b-0 after:content-[' '] after:absolute md:after:h-[53%] after:h-[67%] after:w-[4px] after:bg-slate-300 after:left-[-4px] after:top-[-4px] before:content-[' '] before:absolute md:before:h-[53%] before:h-[67%] before:w-[4px] before:bg-slate-300 before:right-[-4px] before:top-[-4px]  border-slate-300 border-t-4 mx-auto md:mt-0 mt-4 scale-80">
+          <div
+            className={`md:h-[21rem] md:w-[14rem] h-[18rem] w-[12rem] relative border-b-0 after:content-[' '] after:absolute md:after:h-[53%] after:h-[67%] after:w-[4px] after:bg-gradient-to-b after:from-slate-300 after:via-slate-300 after:to-[${
+              anime.coverImage.color || "#2F0882"
+            }] after:left-[-4px] after:top-[-4px] before:content-[' '] before:absolute md:before:h-[53%] before:h-[67%] before:w-[4px]  before:right-[-4px] before:top-[-4px] before:bg-gradient-to-b before:from-slate-300 before:via-slate-300 before:to-[${
+              anime.coverImage.color || "#2F0882"
+            }] border-slate-300 border-t-4 mx-auto md:mt-0 mt-4 scale-80`}>
             <Image
               priority
               className="z-[100]"
@@ -157,7 +178,7 @@ export default function Anime() {
                   />
                 )}
               </div>
-              <div className="lg:text-3xl md:text-2xl sm:text-xl text-lg font-semibold pt-3 text-ellipsis ">
+              <div className="lg:text-3xl md:text-2xl sm:text-xl whitespace-nowrap md:w-[1000px] w-[400px] overflow-hidden text-lg font-semibold pt-3 text-ellipsis ">
                 {anime.title.english || anime.title.userPreferred}
               </div>
 
