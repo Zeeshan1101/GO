@@ -43,6 +43,7 @@ const UserStatus = ({
     variables: {
       mediaId: id,
       status: "COMPLETED",
+      progress: episode,
     },
     onCompleted: (data) => {
       setStatus(data.status.status);
@@ -189,8 +190,16 @@ const UserQuery = gql`
   }
 `;
 const StatusMutation = gql`
-  mutation SaveMediaListEntry($mediaId: Int, $status: MediaListStatus) {
-    status: SaveMediaListEntry(mediaId: $mediaId, status: $status) {
+  mutation SaveMediaListEntry(
+    $mediaId: Int
+    $status: MediaListStatus
+    $progress: Int
+  ) {
+    status: SaveMediaListEntry(
+      mediaId: $mediaId
+      status: $status
+      progress: $progress
+    ) {
       id
       status
       progress
