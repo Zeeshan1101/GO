@@ -3,10 +3,18 @@ import React, { useEffect, useRef, useState } from "react";
 import { useAuth } from "../pages/apollo-client";
 import invert from "invert-color";
 import { motion, AnimatePresence } from "framer-motion";
-const UserStatus = ({ color, id, media }) => {
+const UserStatus = ({
+  color,
+  id,
+  media,
+  setStatus,
+  status,
+  progress,
+  setProgress,
+  episode,
+}) => {
   const { user } = useAuth();
   const ref = useRef();
-  const [status, setStatus] = useState();
   const [show, setShow] = useState(false);
   const [load, setLoad] = useState(false);
   useEffect(() => {
@@ -27,16 +35,18 @@ const UserStatus = ({ color, id, media }) => {
     },
     onCompleted: (data) => {
       setStatus(data.status.status);
+      setProgress(data.status.progress);
     },
   });
 
-  const [statusCompleted, { data: data1 }] = useMutation(StatusMutation, {
+  const [statusCompleted] = useMutation(StatusMutation, {
     variables: {
       mediaId: id,
       status: "COMPLETED",
     },
     onCompleted: (data) => {
       setStatus(data.status.status);
+      setProgress(episode);
       setShow(!show);
       setLoad(false);
     },
@@ -61,6 +71,7 @@ const UserStatus = ({ color, id, media }) => {
     },
     onCompleted: (data) => {
       setStatus(data.status.status);
+      setProgress(data.status.progress);
       setShow(!show);
       setLoad(false);
     },
@@ -87,7 +98,7 @@ const UserStatus = ({ color, id, media }) => {
       white: "#F1F5F9",
     }),
   };
-
+  console.log(progress);
   return (
     <>
       <div ref={ref} className="w-full z-[100] flex items-center transition">
@@ -98,9 +109,9 @@ const UserStatus = ({ color, id, media }) => {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1, animationDelay: "0.3s" }}
                 exit={{ opacity: 0 }}
-                className="btn-group-vertical absolute -translate-y-full w-full text-center  pb-1 item-group ">
+                className="btn-group-vertical absolute -translate-y-full w-full text-center rounded-sm pb-1 item-group ">
                 <button
-                  className={`btn w-full -z-10 no-animation border-none xyz`}
+                  className={`btn w-full rounded-t-lg rounded-none  -z-10 no-animation border-none xyz`}
                   onClick={() => {
                     statusCompleted();
                     setLoad(true);
@@ -109,19 +120,19 @@ const UserStatus = ({ color, id, media }) => {
                   Completed
                 </button>
                 <button
-                  className={`btn w-full -z-10 no-animation border-none `}
+                  className={`btn w-full rounded-none -z-10 no-animation border-none `}
                   onClick={statusWatching}
                   style={styles}>
                   {media === "anime" ? "Watching" : "Reading"}
                 </button>
                 <button
-                  className={`btn w-full -z-10 no-animation border-none `}
+                  className={`btn w-full rounded-none -z-10 no-animation border-none `}
                   onClick={statusPlan}
                   style={styles}>
                   PLan to {media === "anime" ? "Watch" : "Read"}
                 </button>
                 <button
-                  className={`btn w-full -z-10 no-animation border-none `}
+                  className={`btn w-full rounded-b-lg rounded-none -z-10 no-animation border-none `}
                   onClick={statusDrop}
                   style={styles}>
                   Drop
@@ -137,9 +148,7 @@ const UserStatus = ({ color, id, media }) => {
             style={styles}>
             {status ? displayStatus(status, media) : "Add To List"}
             {"  "}
-            {status === "CURRENT" && data.status.progress
-              ? data.status.progress
-              : ""}
+            {status === "CURRENT" && progress ? progress : ""}
             <span
               className={`material-symbols-rounded -rotate-90 transition-all absolute right-2 ${
                 show ? "-rotate-180" : ""

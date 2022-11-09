@@ -4,24 +4,26 @@ import Image from "next/image";
 import parse from "html-react-parser";
 import Description from "../../components/Description";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Tab from "../../components/Tab";
 import Box from "../../components/Box";
 import CharacterBox from "../../components/CharacterBox";
 import Timer from "../../components/Timer";
 import invert from "invert-color";
-import { useLazyQuery, useQuery } from "@apollo/client/react";
+import { useQuery } from "@apollo/client/react";
 import Loader from "../../components/Loader";
 import Head from "next/head";
 import Link from "next/link";
 import { useAuth } from "../apollo-client";
-import client from "../apollo-client";
 import UserStatus from "../../components/UserStatus";
 import SongsList from "../../components/SongsList";
+import { ProcessINC } from "../../components/ProcessINC";
 
 export default function Anime() {
   const { user } = useAuth();
   const { query } = useRouter();
+  const [status, setStatus] = useState();
+  const [progress, setProgress] = useState();
   const [CurrentTab, setCurrentTab] = useState("relations");
   const { data, loading } = useQuery(AnimeQuery, {
     variables: {
@@ -32,7 +34,6 @@ export default function Anime() {
   if (loading) {
     return <Loader />;
   }
-
   const { anime } = data;
   return (
     <motion.div
@@ -55,7 +56,7 @@ export default function Anime() {
           </div>
           {anime.bannerImage && (
             <>
-              <div className="h-[50vh] w-full relative mx-auto md:   md:[shape-outside:inset(0_0_33.5%_0)] [clip-path:inset(0_0_33.5%_0)] [shape-outside:inset(0_0_33.5%_0)] md:scale-100 scale-[1.6]">
+              <div className="h-[50vh] w-full relative mx-auto md:[shape-outside:inset(0_0_33.5%_0)] [clip-path:inset(0_0_33.5%_0)] [shape-outside:inset(0_0_33.5%_0)] md:scale-100 scale-[1.6]">
                 <Image
                   priority
                   className="rounded-t-2xl"
@@ -175,13 +176,26 @@ export default function Anime() {
                     color={anime.coverImage.color}
                     media="anime"
                     id={query.id}
+                    status={status}
+                    setStatus={setStatus}
+                    progress={progress}
+                    setProgress={setProgress}
+                    episode={anime.episodes}
+                  />
+                )}
+                {status === "CURRENT" && (
+                  <ProcessINC
+                    id={query.id}
+                    color={anime.coverImage.color}
+                    media="anime"
+                    progress={progress}
+                    setProgress={setProgress}
                   />
                 )}
               </div>
               <div className="lg:text-3xl md:text-2xl sm:text-xl whitespace-nowrap md:w-[1000px] w-[400px] overflow-hidden text-lg font-semibold pt-3 text-ellipsis ">
                 {anime.title.english || anime.title.userPreferred}
               </div>
-
               {(anime.episodes || anime.nextAiringEpisode) && (
                 <div className=" lg:text-left">
                   {Boolean(anime.episodes) ? "Total" : "Next"} Episode:
@@ -200,7 +214,7 @@ export default function Anime() {
                     <Link key={id} href={`/anime?genre=${genre}`}>
                       <a>
                         <div
-                          className="px-3  rounded-xl"
+                          className="px-3 rounded-xl"
                           style={{
                             backgroundColor:
                               anime.coverImage.color || "#2F0882",
@@ -228,7 +242,6 @@ const AnimeQuery = gql`
   query ($id: Int, $sort: [CharacterSort], $page: Int, $perPage: Int) {
     anime: Media(id: $id) {
       id
-
       title {
         english
         userPreferred
@@ -262,7 +275,6 @@ const AnimeQuery = gql`
       characters(sort: $sort, page: $page, perPage: $perPage) {
         edges {
           id
-
           node {
             name {
               userPreferred
@@ -274,10 +286,8 @@ const AnimeQuery = gql`
           role
         }
       }
-
       nextAiringEpisode {
         episode
-
         airingAt
       }
     }
