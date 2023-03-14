@@ -1,13 +1,13 @@
-import '../styles/globals.css';
-import { AnimatePresence } from 'framer-motion';
-import NavBar from '../components/Navbar';
-import { AuthProvider } from './apollo-client';
+import "../styles/globals.css";
+import { AnimatePresence } from "framer-motion";
+import NavBar from "../components/Navbar";
+import { AuthProvider } from "../lib/apollo-client";
 function MyApp({ Component, pageProps }) {
   return (
     <>
       <AuthProvider>
         <NavBar />
-        <div className='bg-slate-300 h-[100vh]'>
+        <div className="bg-slate-300 h-[100vh]">
           <AnimatePresence>
             <Component {...pageProps} />
           </AnimatePresence>

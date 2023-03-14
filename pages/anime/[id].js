@@ -14,7 +14,7 @@ import { useQuery } from "@apollo/client/react";
 import Loader from "../../components/Loader";
 import Head from "next/head";
 import Link from "next/link";
-import { useAuth } from "../apollo-client";
+import { useAuth } from "../../lib/apollo-client";
 import UserStatus from "../../components/UserStatus";
 import SongsList from "../../components/SongsList";
 import { ProcessINC } from "../../components/ProcessINC";

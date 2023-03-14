@@ -1,6 +1,6 @@
 import { useQuery, gql, useMutation } from "@apollo/client";
 import React, { useEffect, useRef, useState } from "react";
-import { useAuth } from "../pages/apollo-client";
+import { useAuth } from "../lib/apollo-client";
 import invert from "invert-color";
 import { motion, AnimatePresence } from "framer-motion";
 const UserStatus = ({

@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 import { useRouter } from "next/router";
 import { Formik, Field } from "formik";
 import { gql } from "@apollo/client";
-import client from "../apollo-client";
+import client from "../../lib/apollo-client";
 import Box from "../../components/Box";
 import Head from "next/head";
 
